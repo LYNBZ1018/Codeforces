@@ -197,3 +197,62 @@ int main()
     return 0;
 }
 ```
+
+****
+
+### E - Star MST
+```c++
+#include <cstdio>
+#include <iostream>
+
+using namespace std;
+
+typedef long long LL;
+
+const int N = 255, MOD = 998244353;
+
+int dp[N][N];
+int c[N][N];
+
+LL fast(LL x, LL y)
+{
+    LL s = 1;
+    while (y)
+    {
+        if (y % 2) s = s * x % MOD;
+        x = x * x % MOD;
+        y = y >> 1;
+    }
+    return s;
+}
+
+void solve()
+{
+    int n, k;
+    scanf("%d%d", &n, &k);
+    n -- ;
+    for (int i = 0; i <= n; i ++ )
+    {
+        c[i][0] = c[i][i] = 1;
+        for (int j = 1; j < i; j ++ )
+            c[i][j] = (c[i - 1][j] + c[i - 1][j - 1]) % MOD;
+    }
+    
+    dp[0][0] = 1;
+    for (int j = 0; j < k; j ++ )
+        for (int t = 0; t <= n; t ++ )
+            for (int i = 0; i <= n - t; i ++ )
+            {
+                dp[i + t][j + 1] += 1LL* dp[i][j] * c[n - i][t] % MOD * fast(k - j, 1ll * t * (t - 1) / 2 + t  * i) % MOD;
+                dp[i + t][j + 1] %= MOD;
+            }
+    printf("%d\n", dp[n][k]);
+}
+
+int main()
+{
+    solve();
+    
+    return 0;
+}
+```
